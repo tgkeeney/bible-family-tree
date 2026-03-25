@@ -114,7 +114,8 @@ function getMeta(branch: string) {
 function highlightRefs(text: string): string {
   return text
     .replace(/\(([^)]*\d[^)]*)\)/g, '<span class="scripture-ref">($1)</span>')
-    .replace(/✦\s*/g, '<span class="info-callout-mark">&#x2726; </span>');
+    .replace(/✦\s*/g, '<span class="info-callout-mark">&#x2726; </span>')
+    .replace(/'([A-Z][^']{38,})'/g, '<span class="pull-quote">\u2018$1\u2019</span>');
 }
 
 function formatInfoHtml(info: string): string {
@@ -827,6 +828,7 @@ function SearchOverlay({
                   <div className="result-info">
                     <span className="result-name">{person.name}</span>
                     <span className="result-branch">{m.label}</span>
+                    <span className="result-brief">{getBrief(person.info, 90)}</span>
                   </div>
                 </button>
               );
@@ -936,6 +938,7 @@ export default function Page() {
 
   const navigateTo = useCallback((person: TreePerson) => {
     setSelectedPerson(person);
+    window.history.replaceState(null, "", `#${person.id}`);
   }, []);
 
   const switchLineage = useCallback((person: TreePerson) => {
@@ -971,6 +974,19 @@ export default function Page() {
   const handleEnterChronicle = useCallback(() => {
     setPhase("fading");
     setTimeout(() => setPhase("chronicle"), 1200);
+  }, []);
+
+  /* ─── Deep-link: open person from URL hash ─── */
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      const person = allPeople.find((p) => p.id === hash);
+      if (person) {
+        setPhase("chronicle");
+        setSelectedPerson(person);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -1051,13 +1067,28 @@ export default function Page() {
           </p>
           <p className="end-ref">Genesis 49:10</p>
         </div>
+
+        {isDefaultLineage && (
+          <div className="explore-cta">
+            <div className="explore-cta-divider" />
+            <p className="explore-cta-text">
+              This is only one path through the tree.
+            </p>
+            <p className="explore-cta-sub">
+              Click any figure above to trace their descendants, or search for anyone in the genealogy.
+            </p>
+            <button className="explore-cta-btn" onClick={() => setSearchOpen(true)}>
+              Explore the full tree<span className="explore-cta-arrow">&rarr;</span>
+            </button>
+          </div>
+        )}
       </main>
 
       {selectedPerson && (
         <DetailModal
           person={selectedPerson}
           path={path}
-          onClose={() => setSelectedPerson(null)}
+          onClose={() => { setSelectedPerson(null); window.history.replaceState(null, "", window.location.pathname); }}
           onNavigate={navigateTo}
         />
       )}

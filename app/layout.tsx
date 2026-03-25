@@ -45,11 +45,12 @@ export const metadata: Metadata = {
   openGraph: {
     title: "The Lineage \u2014 Biblical Family Tree",
     description:
-      "An immersive interactive journey through the biblical genealogy from Adam to King David. 173 figures, 13 lineage branches, 20+ generations.",
+      "An immersive interactive journey through the biblical genealogy from Adam to King David. 185+ figures, 13 lineage branches, 20+ generations.",
     url: "https://lineage.bible",
     siteName: "The Lineage",
     type: "website",
     locale: "en_US",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
