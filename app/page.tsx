@@ -93,8 +93,35 @@ function getMeta(branch: string) {
   return branchMeta[branch] || branchMeta.seth;
 }
 
+function highlightRefs(text: string): string {
+  return text
+    .replace(/\(([^)]*\d[^)]*)\)/g, '<span class="scripture-ref">($1)</span>')
+    .replace(/✦\s*/g, '<span class="info-callout-mark">&#x2726; </span>');
+}
+
 function formatInfoHtml(info: string): string {
-  return info.replace(/\(([^)]*\d[^)]*)\)/g, '<span class="scripture-ref">($1)</span>');
+  const parts = info.split(/\s*───\s*/);
+
+  if (parts.length <= 1) {
+    return highlightRefs(info);
+  }
+
+  // First part is the intro
+  let html = `<p class="info-intro">${highlightRefs(parts[0])}</p>`;
+
+  for (let i = 1; i < parts.length; i++) {
+    const section = parts[i];
+    const colonIdx = section.indexOf(":");
+    if (colonIdx > 0 && colonIdx < 100) {
+      const title = section.slice(0, colonIdx).trim();
+      const body = section.slice(colonIdx + 1).trim();
+      html += `<div class="info-section"><h5 class="info-section-title">${title}</h5><p>${highlightRefs(body)}</p></div>`;
+    } else {
+      html += `<div class="info-section"><p>${highlightRefs(section)}</p></div>`;
+    }
+  }
+
+  return html;
 }
 
 /* ═══════════════════════════════════════════
