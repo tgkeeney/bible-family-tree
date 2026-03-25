@@ -67,8 +67,10 @@ function toRoman(n: number): string {
 }
 
 function getBrief(info: string, maxLen = 160): string {
-  // Get first two sentences
-  const parts = info.split(/\.\s/);
+  // Strip everything from the first ─── section marker onward
+  const intro = info.split(/\s*───\s*/)[0].trim();
+  // Get first two sentences of the intro
+  const parts = intro.split(/\.\s/);
   let s = parts[0] + ".";
   if (parts.length > 1 && s.length < 80) s += " " + parts[1] + ".";
   return s.length > maxLen ? s.slice(0, maxLen - 1) + "\u2026" : s;
