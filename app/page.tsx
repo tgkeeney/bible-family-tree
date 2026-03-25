@@ -66,14 +66,30 @@ function toRoman(n: number): string {
   return result;
 }
 
-function getBrief(info: string, maxLen = 160): string {
-  // Strip everything from the first ─── section marker onward
-  const intro = info.split(/\s*───\s*/)[0].trim();
-  // Get first two sentences of the intro
-  const parts = intro.split(/\.\s/);
-  let s = parts[0] + ".";
-  if (parts.length > 1 && s.length < 80) s += " " + parts[1] + ".";
-  return s.length > maxLen ? s.slice(0, maxLen - 1) + "\u2026" : s;
+function getBrief(info: string, maxLen = 150): string {
+  const sections = info.split(/\s*───\s*/);
+  let text = sections[0].trim();
+
+  // If intro is too short, pull the first sentence from the first section body
+  if (text.length < 80 && sections.length > 1) {
+    const sec = sections[1];
+    const colon = sec.indexOf(":");
+    if (colon > 0 && colon < 100) {
+      const body = sec.slice(colon + 1).trim();
+      const first = body.match(/^[^.]+\./);
+      if (first) text += " " + first[0];
+    }
+  }
+
+  // Strip scripture references for a cleaner card
+  text = text.replace(/\s*\([^)]*\d+[:.]\d+[^)]*\)/g, "");
+  // Collapse whitespace and fix double periods
+  text = text.replace(/\s{2,}/g, " ").replace(/\.{2,}/g, ".").trim();
+
+  if (text.length > maxLen) {
+    text = text.slice(0, maxLen).replace(/\s+\S*$/, "") + "\u2026";
+  }
+  return text;
 }
 
 function countDescendants(node: TreePerson): number {

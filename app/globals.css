@@ -968,9 +968,9 @@ body::after {
 
 .descendants-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 10px;
-  max-width: 680px;
+  max-width: 720px;
   margin: 0 auto;
 }
 
@@ -1025,12 +1025,12 @@ body::after {
 
 .child-card-brief {
   font-family: var(--font-body);
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 400;
   color: var(--text-muted);
-  line-height: 1.6;
+  line-height: 1.65;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
